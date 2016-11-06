@@ -328,8 +328,6 @@ public class CwacCameraFragment extends Fragment implements View.OnClickListener
         Log.d("gun0912","takePicture()");
 
         try {
-            cameraView.takePicture(false, true);
-            btn_take_picture.setEnabled(false);
             animateShutter();
         } catch (IllegalStateException ex) {
 
@@ -374,6 +372,9 @@ public class CwacCameraFragment extends Fragment implements View.OnClickListener
             public void onAnimationEnd(Animator animation) {
                 vShutter.setVisibility(View.GONE);
                 mProgressDialog.show();
+
+                cameraView.takePicture(false, true);
+                btn_take_picture.setEnabled(false);
 
             }
         });
