@@ -11,6 +11,7 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
@@ -327,15 +328,19 @@ public class CwacCameraFragment extends Fragment implements View.OnClickListener
     private void takePicture() {
         Log.d("gun0912","takePicture()");
 
-        try {
-            animateShutter();
-        } catch (IllegalStateException ex) {
-
-            Util.toast(this, getResources().getString(R.string.focusing));
-
-        }
-
-
+        mProgressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                try {
+                    cameraView.takePicture(false, true);
+                    btn_take_picture.setEnabled(false);
+                } catch (IllegalStateException ex) {
+                    Util.toast(CwacCameraFragment.this, getResources().getString(R.string.focusing));
+                    mProgressDialog.dismiss();
+                }
+            }
+        });
+        mProgressDialog.show();
     }
 
 
@@ -371,11 +376,6 @@ public class CwacCameraFragment extends Fragment implements View.OnClickListener
             @Override
             public void onAnimationEnd(Animator animation) {
                 vShutter.setVisibility(View.GONE);
-                mProgressDialog.show();
-
-                cameraView.takePicture(false, true);
-                btn_take_picture.setEnabled(false);
-
             }
         });
         animatorSet.start();
@@ -397,7 +397,7 @@ public class CwacCameraFragment extends Fragment implements View.OnClickListener
         focusList = null;
         btn_take_picture.setEnabled(true);
 
-        if (mProgressDialog != null && mProgressDialog.isShowing())
+        if (mProgressDialog != null)
             mProgressDialog.dismiss();
 
 
